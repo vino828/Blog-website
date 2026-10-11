@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogSphere | Explore Stories</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f9fc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: white;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: #0891b2;
+        }
+
+        .logo span {
+            color: #1e293b;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 28px;
+        }
+
+        nav ul a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        nav ul a:hover {
+            color: #0891b2;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 390px;
+            padding: 75px 20px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #0891b2, #4f46e5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero .tag {
+            background: rgba(255,255,255,0.2);
+            padding: 7px 18px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            max-width: 600px;
+            font-size: 17px;
+            margin-bottom: 28px;
+        }
+
+        .hero button {
+            background: white;
+            color: #0891b2;
+            padding: 13px 27px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .hero button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Blog Section */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 55px 25px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .section-description {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        /* Search */
+        .search-box {
+            max-width: 550px;
+            margin: 0 auto 25px;
+            display: flex;
+            background: white;
+            border: 1px solid #dbe4ee;
+            border-radius: 30px;
+            overflow: hidden;
+        }
+
+        .search-box input {
+            flex: 1;
+            min-width: 0;
+            padding: 15px 20px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .search-box button {
+            background: #0891b2;
+            color: white;
+            border: none;
+            padding: 0 22px;
+            cursor: pointer;
+        }
+
+        /* Category Filters */
+        .filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 25px;
+            background: white;
+            color: #334155;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #0891b2;
+            color: white;
+            border-color: #0891b2;
+        }
+
+        /* Blog Cards */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 28px;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
+
+        .blog-card img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-content {
+            padding: 22px;
+        }
+
+        .category {
+            display: inline-block;
+            color: #0891b2;
+            background: #e0f7fa;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .blog-card h3 {
+            font-size: 21px;
+            margin-bottom: 10px;
+        }
+
+        .blog-card p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .read-more {
+            border: none;
+            background: none;
+            color: #0891b2;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .read-more:hover {
+            color: #4f46e5;
+        }
+
+        .no-results {
+            display: none;
+            text-align: center;
+            color: #64748b;
+            padding: 30px;
+        }
+
+        /* Newsletter */
+        .newsletter {
+            text-align: center;
+            padding: 55px 20px;
+            background: #e0f7fa;
+        }
+
+        .newsletter h2 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .newsletter p {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .newsletter form {
+            display: flex;
+            justify-content: center;
+            max-width: 450px;
+            margin: auto;
+            gap: 10px;
+        }
+
+        .newsletter input {
+            flex: 1;
+            min-width: 0;
+            padding: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .newsletter button {
+            padding: 13px 18px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background: #0891b2;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #0f172a;
+            color: white;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 900px) {
+            .blog-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            nav {
+                padding: 18px 5%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav ul {
+                gap: 18px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 55px 20px;
+            }
+
+            .container {
+                padding: 40px 16px;
+            }
+
+            .section-title {
+                font-size: 27px;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .newsletter form {
+                flex-direction: column;
+            }
+
+            .newsletter button {
+                padding: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">Blog<span>Sphere.</span></div>
+
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#blogs">Blogs</a></li>
+            <li><a href="#newsletter">Subscribe</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero" id="home">
+        <span class="tag">WELCOME TO BLOGSPHERE</span>
+
+        <h1>Ideas That Inspire You ✨</h1>
+
+        <p>
+            Discover amazing stories, explore new ideas, and learn something
+            exciting every day with our latest blog articles.
+        </p>
+
+        <button onclick="document.getElementById('blogs').scrollIntoView()">
+            Explore Blogs ↓
+        </button>
+    </header>
+
+    <!-- Blog Section -->
+    <main class="container" id="blogs">
+
+        <h2 class="section-title">Explore Our Blogs</h2>
+
+        <p class="section-description">
+            Find inspiration in every story.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="search-box">
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="Search your favourite blog..."
+                aria-label="Search blogs"
+            >
+            <button type="button" id="searchBtn">Search</button>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="filters">
+            <button class="filter-btn active" data-category="All">All</button>
+            <button class="filter-btn" data-category="Technology">Technology</button>
+            <button class="filter-btn" data-category="Travel">Travel</button>
+            <button class="filter-btn" data-category="Lifestyle">Lifestyle</button>
+            <button class="filter-btn" data-category="Food">Food</button>
+        </div>
+
+        <!-- Blog Cards -->
+        <div class="blog-grid" id="blogGrid">
+
+            <article class="blog-card" data-category="Technology">
+                <img
+                    src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80"
+                    alt="People working with computers"
+                    loading="lazy"
+                >
+
+                <div class="card-content">
+                    <span class="category">Technology</span>
+                    <h3>The Future of Artificial Intelligence</h3>
+
+                    <p>
+                        Discover how AI is transforming our daily lives,
+                        businesses, and the future of technology.
+                    </p>
+
+                    <div class="card-footer">
+                        <span class="date">October 05, 2026</span>
+                        <button class="read-more" type="button"
+                            data-title="The Future of Artificial Intelligence"
+                            data-text="Artificial Intelligence is changing the way we work, learn, and communicate. From virtual assistants to healthcare applications, AI helps people solve problems and complete tasks efficiently. Learning about AI can open exciting opportunities in technology.">
+                            Read More →
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="blog-card" data-category="Travel">
+                <img
+                    src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80"
+                    alt="Beautiful mountain lake"
+                    loading="lazy"
+                >
+
+                <div class="card-content">
+                    <span class="category">Travel</span>
+                    <h3>Beautiful Places to Explore</h3>
+
+                    <p>
+                        Travel to breathtaking destinations, experience
+                        different cultures, and create unforgettable memories.
+                    </p>
+
+                    <div class="card-footer">
+                        <span class="date">October 04, 2026</span>
+                        <button class="read-more" type="button"
+                            data-title="Beautiful Places to Explore"
+                            data-text="Travelling gives us an opportunity to discover new places, meet people, and experience different cultures. Plan your journey, explore nature, taste local food, and capture special memories. Even a short trip can refresh your mind and inspire you.">
+                            Read More →
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="blog-card" data-category="Lifestyle">
+                <img
+                    src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=800&q=80"
+                    alt="Peaceful lifestyle and nature"
+                    loading="lazy"
+                >
+
+                <div class="card-content">
+                    <span class="category">Lifestyle</span>
+                    <h3>Simple Habits for a Better Life</h3>
+
+                    <p>
+                        Build positive habits, manage your time, and make
+                        small changes for a happier everyday life.
+                    </p>
+
+                    <div class="card-footer">
+                        <span class="date">October 03, 2026</span>
+                        <button class="read-more" type="button"
+                            data-title="Simple Habits for a Better Life"
+                            data-text="A better lifestyle starts with small daily habits. Get enough rest, organise your tasks, learn something new, spend time with people you care about, and take breaks when needed. Consistency matters more than trying to change everything at once.">
+                            Read More →
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="blog-card" data-category="Food">
+                <img
+                    src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80"
+                    alt="Fresh and colourful healthy food"
+                    loading="lazy"
+                >
+
+                <div class="card-content">
+                    <span class="category">Food</span>
+                    <h3>Healthy Food for Everyday Energy</h3>
+
+                    <p>
+                        Explore colourful meals, fresh ingredients,
+                        and simple ideas for your everyday menu.
+                    </p>
+
+                    <div class="card-footer">
+                        <span class="date">October 02, 2026</span>
+                        <button class="read-more" type="button"
+                            data-title="Healthy Food for Everyday Energy"
+                            data-text="Balanced meals can help support your daily energy. Include a variety of vegetables, fruits, whole grains, protein sources, and enough water in your routine. Simple home-cooked meals can be both enjoyable and nourishing.">
+                            Read More →
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="blog-card" data-category="Technology">
+                <img
+                    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
+                    alt="Web development workspace"
+                    loading="lazy"
+                >
+
+                <div class="card-content">
+                    <span class="category">Technology</span>
+                    <h3>Start Your Web Development Journey</h3>
+
+                    <p>
+                        Learn how HTML, CSS, and JavaScript work together
+                        to create beautiful and interactive websites.
+                    </p>
+
+                    <div class="card-footer">
+                        <span class="date">October 01, 2026</span>
+                        <button class="read-more" type="button"
+                            data-title="Start Your Web Development Journey"
+                            data-text="HTML provides the structure of a webpage, CSS controls its appearance, and JavaScript adds interactive behaviour. Start with small projects, practise regularly, and gradually build responsive websites. A portfolio of projects can help demonstrate your skills.">
+                            Read More →
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="blog-card" data-category="Travel">
+                <img
+                    src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+                    alt="Scenic outdoor travel destination"
+                    loading="lazy"
+                >
+
+                <div class="card-content">
+                    <span class="category">Travel</span>
+                    <h3>Why Nature Makes Us Feel Better</h3>
+
+                    <p>
+                        Take a break from busy routines and discover
+                        the beauty of spending time outdoors.
+                    </p>
+
+                    <div class="card-footer">
+                        <span class="date">September 30, 2026</span>
+                        <button class="read-more" type="button"
+                            data-title="Why Nature Makes Us Feel Better"
+                            data-text="Spending time in nature can be a refreshing way to take a break from everyday routines. A walk in a park, a visit to the countryside, or simply enjoying fresh air can help you slow down and appreciate your surroundings.">
+                            Read More →
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <p class="no-results" id="noResults">
+            No blogs found. Try another search or category.
+        </p>
+
+    </main>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter" id="newsletter">
+        <h2>Stay Inspired! 💌</h2>
+
+        <p>
+            Join our community and stay updated with exciting stories.
+        </p>
+
+        <form id="newsletterForm">
+            <input
+                type="email"
+                id="emailInput"
+                placeholder="Enter your email address"
+                aria-label="Email address"
+                required
+            >
+
+            <button type="submit">Subscribe</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 BlogSphere. Designed with ❤️ for curious minds.</p>
+    </footer>
+
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const searchBtn = document.getElementById("searchBtn");
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        const blogCards = document.querySelectorAll(".blog-card");
+        const noResults = document.getElementById("noResults");
+
+        let selectedCategory = "All";
+
+        // Search and category filtering
+function filterItems() {
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const galleryItems = document.querySelectorAll(".gallery-item");
+
+    const searchText = searchInput.value.toLowerCase();
+    const selectedCategory = categoryFilter.value;
+
+    galleryItems.forEach((item) => {
+        const title = item.querySelector("h3").textContent.toLowerCase();
+        const category = item.dataset.category;
+
+        const matchesSearch = title.includes(searchText);
+        const matchesCategory =
+            selectedCategory === "All" ||
+            category === selectedCategory;
+
+        if (matchesSearch && matchesCategory) {
+            item.style.display = "block";
+        } else {
+            item.style.display = "none";
+        }
+    });
+}
+
+// Search event
+document.getElementById("searchInput")
+    .addEventListener("input", filterItems);
+
+// Category filter event
+document.getElementById("categoryFilter")
+    .addEventListener("change", filterItems);
